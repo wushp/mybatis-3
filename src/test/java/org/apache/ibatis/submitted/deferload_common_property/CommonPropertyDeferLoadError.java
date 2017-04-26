@@ -1,17 +1,15 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ * Copyright 2009-2015 the original author or authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.ibatis.submitted.deferload_common_property;
 
@@ -44,10 +42,10 @@ public class CommonPropertyDeferLoadError {
 
         try {
             Class.forName("org.hsqldb.jdbcDriver");
-            conn = DriverManager.getConnection("jdbc:hsqldb:mem:deferload_common_property", "sa",
-                    "");
+            conn = DriverManager.getConnection("jdbc:hsqldb:mem:deferload_common_property", "sa", "");
 
-            Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/deferload_common_property/CreateDB.sql");
+            Reader reader =
+                    Resources.getResourceAsReader("org/apache/ibatis/submitted/deferload_common_property/CreateDB.sql");
 
             ScriptRunner runner = new ScriptRunner(conn);
             runner.setLogWriter(null);
@@ -56,9 +54,11 @@ public class CommonPropertyDeferLoadError {
             conn.commit();
             reader.close();
 
-            reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/deferload_common_property/ibatisConfig.xml");
+            reader = Resources
+                    .getResourceAsReader("org/apache/ibatis/submitted/deferload_common_property/ibatisConfig.xml");
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-            reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/deferload_common_property/lazyLoadIbatisConfig.xml");
+            reader = Resources.getResourceAsReader(
+                    "org/apache/ibatis/submitted/deferload_common_property/lazyLoadIbatisConfig.xml");
             lazyLoadSqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
             reader.close();
         } finally {
@@ -74,15 +74,17 @@ public class CommonPropertyDeferLoadError {
         try {
             class MyResultHandler implements ResultHandler {
                 List<Child> children = new ArrayList<Child>();
+
                 @Override
                 public void handleResult(ResultContext context) {
-                    Child child = (Child)context.getResultObject();
+                    Child child = (Child) context.getResultObject();
                     children.add(child);
                 }
             };
             MyResultHandler myResultHandler = new MyResultHandler();
-            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll", myResultHandler);
-            for (Child child: myResultHandler.children) {
+            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll",
+                    myResultHandler);
+            for (Child child : myResultHandler.children) {
                 assertNotNull(child.getFather());
             }
         } finally {
@@ -97,11 +99,12 @@ public class CommonPropertyDeferLoadError {
             class MyResultHandler implements ResultHandler {
                 @Override
                 public void handleResult(ResultContext context) {
-                    Child child = (Child)context.getResultObject();
+                    Child child = (Child) context.getResultObject();
                     assertNotNull(child.getFather());
                 }
             };
-            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll", new MyResultHandler());
+            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll",
+                    new MyResultHandler());
         } finally {
             sqlSession.close();
         }
@@ -113,15 +116,17 @@ public class CommonPropertyDeferLoadError {
         try {
             class MyResultHandler implements ResultHandler {
                 List<Child> children = new ArrayList<Child>();
+
                 @Override
                 public void handleResult(ResultContext context) {
-                    Child child = (Child)context.getResultObject();
+                    Child child = (Child) context.getResultObject();
                     children.add(child);
                 }
             };
             MyResultHandler myResultHandler = new MyResultHandler();
-            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll", myResultHandler);
-            for (Child child: myResultHandler.children) {
+            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll",
+                    myResultHandler);
+            for (Child child : myResultHandler.children) {
                 assertNotNull(child.getFather());
             }
         } finally {
@@ -136,11 +141,12 @@ public class CommonPropertyDeferLoadError {
             class MyResultHandler implements ResultHandler {
                 @Override
                 public void handleResult(ResultContext context) {
-                    Child child = (Child)context.getResultObject();
+                    Child child = (Child) context.getResultObject();
                     assertNotNull(child.getFather());
                 }
             };
-            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll", new MyResultHandler());
+            sqlSession.select("org.apache.ibatis.submitted.deferload_common_property.ChildMapper.selectAll",
+                    new MyResultHandler());
         } finally {
             sqlSession.close();
         }

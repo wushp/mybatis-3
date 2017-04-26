@@ -1,17 +1,15 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ * Copyright 2009-2015 the original author or authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.ibatis.executor.loader;
 
@@ -39,94 +37,92 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
  */
 public abstract class AbstractSerialStateHolder implements Externalizable {
 
-  private static final long serialVersionUID = 8940388717901644661L;
-  private static final ThreadLocal<ObjectOutputStream> stream = new ThreadLocal<ObjectOutputStream>();
-  private byte[] userBeanBytes = new byte[0];
-  private Object userBean;
-  private Map<String, ResultLoaderMap.LoadPair> unloadedProperties;
-  private ObjectFactory objectFactory;
-  private Class<?>[] constructorArgTypes;
-  private Object[] constructorArgs;
+    private static final long serialVersionUID = 8940388717901644661L;
+    private static final ThreadLocal<ObjectOutputStream> stream = new ThreadLocal<ObjectOutputStream>();
+    private byte[] userBeanBytes = new byte[0];
+    private Object userBean;
+    private Map<String, ResultLoaderMap.LoadPair> unloadedProperties;
+    private ObjectFactory objectFactory;
+    private Class<?>[] constructorArgTypes;
+    private Object[] constructorArgs;
 
-  public AbstractSerialStateHolder() {
-  }
+    public AbstractSerialStateHolder() {}
 
-  public AbstractSerialStateHolder(
-          final Object userBean,
-          final Map<String, ResultLoaderMap.LoadPair> unloadedProperties,
-          final ObjectFactory objectFactory,
-          List<Class<?>> constructorArgTypes,
-          List<Object> constructorArgs) {
-    this.userBean = userBean;
-    this.unloadedProperties = new HashMap<String, ResultLoaderMap.LoadPair>(unloadedProperties);
-    this.objectFactory = objectFactory;
-    this.constructorArgTypes = constructorArgTypes.toArray(new Class<?>[constructorArgTypes.size()]);
-    this.constructorArgs = constructorArgs.toArray(new Object[constructorArgs.size()]);
-  }
-
-  @Override
-  public final void writeExternal(final ObjectOutput out) throws IOException {
-    boolean firstRound = false;
-    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ObjectOutputStream os = stream.get();
-    if (os == null) {
-      os = new ObjectOutputStream(baos);
-      firstRound = true;
-      stream.set(os);
+    public AbstractSerialStateHolder(final Object userBean,
+            final Map<String, ResultLoaderMap.LoadPair> unloadedProperties, final ObjectFactory objectFactory,
+            List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+        this.userBean = userBean;
+        this.unloadedProperties = new HashMap<String, ResultLoaderMap.LoadPair>(unloadedProperties);
+        this.objectFactory = objectFactory;
+        this.constructorArgTypes = constructorArgTypes.toArray(new Class<?>[constructorArgTypes.size()]);
+        this.constructorArgs = constructorArgs.toArray(new Object[constructorArgs.size()]);
     }
 
-    os.writeObject(this.userBean);
-    os.writeObject(this.unloadedProperties);
-    os.writeObject(this.objectFactory);
-    os.writeObject(this.constructorArgTypes);
-    os.writeObject(this.constructorArgs);
+    @Override
+    public final void writeExternal(final ObjectOutput out) throws IOException {
+        boolean firstRound = false;
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream os = stream.get();
+        if (os == null) {
+            os = new ObjectOutputStream(baos);
+            firstRound = true;
+            stream.set(os);
+        }
 
-    final byte[] bytes = baos.toByteArray();
-    out.writeObject(bytes);
+        os.writeObject(this.userBean);
+        os.writeObject(this.unloadedProperties);
+        os.writeObject(this.objectFactory);
+        os.writeObject(this.constructorArgTypes);
+        os.writeObject(this.constructorArgs);
 
-    if (firstRound) {
-      stream.remove();
-    }
-  }
+        final byte[] bytes = baos.toByteArray();
+        out.writeObject(bytes);
 
-  @Override
-  public final void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-    final Object data = in.readObject();
-    if (data.getClass().isArray()) {
-      this.userBeanBytes = (byte[]) data;
-    } else {
-      this.userBean = data;
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  protected final Object readResolve() throws ObjectStreamException {
-    /* Second run */
-    if (this.userBean != null && this.userBeanBytes.length == 0) {
-      return this.userBean;
+        if (firstRound) {
+            stream.remove();
+        }
     }
 
-    /* First run */
-    try {
-      final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(this.userBeanBytes));
-      this.userBean = in.readObject();
-      this.unloadedProperties = (Map<String, ResultLoaderMap.LoadPair>) in.readObject();
-      this.objectFactory = (ObjectFactory) in.readObject();
-      this.constructorArgTypes = (Class<?>[]) in.readObject();
-      this.constructorArgs = (Object[]) in.readObject();
-    } catch (final IOException ex) {
-      throw (ObjectStreamException) new StreamCorruptedException().initCause(ex);
-    } catch (final ClassNotFoundException ex) {
-      throw (ObjectStreamException) new InvalidClassException(ex.getLocalizedMessage()).initCause(ex);
+    @Override
+    public final void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final Object data = in.readObject();
+        if (data.getClass().isArray()) {
+            this.userBeanBytes = (byte[]) data;
+        } else {
+            this.userBean = data;
+        }
     }
 
-    final Map<String, ResultLoaderMap.LoadPair> arrayProps = new HashMap<String, ResultLoaderMap.LoadPair>(this.unloadedProperties);
-    final List<Class<?>> arrayTypes = Arrays.asList(this.constructorArgTypes);
-    final List<Object> arrayValues = Arrays.asList(this.constructorArgs);
+    @SuppressWarnings("unchecked")
+    protected final Object readResolve() throws ObjectStreamException {
+        /* Second run */
+        if (this.userBean != null && this.userBeanBytes.length == 0) {
+            return this.userBean;
+        }
 
-    return this.createDeserializationProxy(userBean, arrayProps, objectFactory, arrayTypes, arrayValues);
-  }
+        /* First run */
+        try {
+            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(this.userBeanBytes));
+            this.userBean = in.readObject();
+            this.unloadedProperties = (Map<String, ResultLoaderMap.LoadPair>) in.readObject();
+            this.objectFactory = (ObjectFactory) in.readObject();
+            this.constructorArgTypes = (Class<?>[]) in.readObject();
+            this.constructorArgs = (Object[]) in.readObject();
+        } catch (final IOException ex) {
+            throw (ObjectStreamException) new StreamCorruptedException().initCause(ex);
+        } catch (final ClassNotFoundException ex) {
+            throw (ObjectStreamException) new InvalidClassException(ex.getLocalizedMessage()).initCause(ex);
+        }
 
-  protected abstract Object createDeserializationProxy(Object target, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory,
-          List<Class<?>> constructorArgTypes, List<Object> constructorArgs);
+        final Map<String, ResultLoaderMap.LoadPair> arrayProps =
+                new HashMap<String, ResultLoaderMap.LoadPair>(this.unloadedProperties);
+        final List<Class<?>> arrayTypes = Arrays.asList(this.constructorArgTypes);
+        final List<Object> arrayValues = Arrays.asList(this.constructorArgs);
+
+        return this.createDeserializationProxy(userBean, arrayProps, objectFactory, arrayTypes, arrayValues);
+    }
+
+    protected abstract Object createDeserializationProxy(Object target,
+            Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory,
+            List<Class<?>> constructorArgTypes, List<Object> constructorArgs);
 }

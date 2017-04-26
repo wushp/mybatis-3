@@ -1,17 +1,15 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ * Copyright 2009-2015 the original author or authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.ibatis.submitted.enumtypehandler_on_map;
 
@@ -32,19 +30,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class EnumTypeHandlerTest {
-    
+
     private static SqlSessionFactory sqlSessionFactory;
-    
+
     @BeforeClass
     public static void initDatabase() throws Exception {
         Connection conn = null;
 
         try {
             Class.forName("org.hsqldb.jdbcDriver");
-            conn = DriverManager.getConnection("jdbc:hsqldb:mem:enumtypehandler_on_map", "sa",
-                    "");
+            conn = DriverManager.getConnection("jdbc:hsqldb:mem:enumtypehandler_on_map", "sa", "");
 
-            Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/enumtypehandler_on_map/CreateDB.sql");
+            Reader reader =
+                    Resources.getResourceAsReader("org/apache/ibatis/submitted/enumtypehandler_on_map/CreateDB.sql");
 
             ScriptRunner runner = new ScriptRunner(conn);
             runner.setLogWriter(null);
@@ -53,7 +51,8 @@ public class EnumTypeHandlerTest {
             conn.commit();
             reader.close();
 
-            reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/enumtypehandler_on_map/ibatisConfig.xml");
+            reader = Resources
+                    .getResourceAsReader("org/apache/ibatis/submitted/enumtypehandler_on_map/ibatisConfig.xml");
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
             reader.close();
         } finally {
@@ -62,7 +61,7 @@ public class EnumTypeHandlerTest {
             }
         }
     }
-    
+
     @Test
     public void testEnumWithParam() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -70,8 +69,9 @@ public class EnumTypeHandlerTest {
         List<Person> persons = personMapper.getByType(Person.Type.PERSON, "");
         Assert.assertNotNull("Persons must not be null", persons);
         Assert.assertEquals("Persons must contain exactly 1 person", 1, persons.size());
-      sqlSession.close();
+        sqlSession.close();
     }
+
     @Test
     public void testEnumWithoutParam() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -81,6 +81,7 @@ public class EnumTypeHandlerTest {
             public String getName() {
                 return "";
             }
+
             @Override
             public Type getType() {
                 return Person.Type.PERSON;
@@ -88,6 +89,6 @@ public class EnumTypeHandlerTest {
         });
         Assert.assertNotNull("Persons must not be null", persons);
         Assert.assertEquals("Persons must contain exactly 1 person", 1, persons.size());
-      sqlSession.close();
+        sqlSession.close();
     }
 }

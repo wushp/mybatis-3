@@ -1,17 +1,15 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ * Copyright 2009-2015 the original author or authors.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.ibatis.submitted.blobtest;
 
@@ -40,8 +38,7 @@ public class BlobTest {
 
         try {
             Class.forName("org.hsqldb.jdbcDriver");
-            conn = DriverManager.getConnection("jdbc:hsqldb:mem:blobtest", "sa",
-                    "");
+            conn = DriverManager.getConnection("jdbc:hsqldb:mem:blobtest", "sa", "");
 
             Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/blobtest/CreateDB.sql");
 
@@ -64,14 +61,14 @@ public class BlobTest {
 
     @Test
     /*
-     * This test demonstrates the use of type aliases for primitive types
-     * in constructor based result maps
+     * This test demonstrates the use of type aliases for primitive types in constructor based
+     * result maps
      */
     public void testInsertBlobThenSelectAll() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             BlobMapper blobMapper = sqlSession.getMapper(BlobMapper.class);
-            
+
             byte[] myblob = new byte[] {1, 2, 3, 4, 5};
             BlobRecord blobRecord = new BlobRecord(1, myblob);
             int rows = blobMapper.insert(blobRecord);
@@ -82,8 +79,8 @@ public class BlobTest {
 
             assertEquals(1, results.size());
             BlobRecord result = results.get(0);
-            assertEquals (blobRecord.getId(), result.getId());
-            assertTrue (blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
+            assertEquals(blobRecord.getId(), result.getId());
+            assertTrue(blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
         } finally {
             sqlSession.close();
         }
@@ -91,8 +88,8 @@ public class BlobTest {
 
     @Test
     /*
-     * This test demonstrates the use of type aliases for primitive types
-     * in constructor based result maps
+     * This test demonstrates the use of type aliases for primitive types in constructor based
+     * result maps
      */
     public void testInsertBlobObjectsThenSelectAll() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -109,8 +106,8 @@ public class BlobTest {
 
             assertEquals(1, results.size());
             BlobRecord result = results.get(0);
-            assertEquals (blobRecord.getId(), result.getId());
-            assertTrue (blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
+            assertEquals(blobRecord.getId(), result.getId());
+            assertTrue(blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
         } finally {
             sqlSession.close();
         }
